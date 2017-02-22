@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <!--[if IE]>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'><![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Syntax helper</title>
+    <link type="text/css" rel="stylesheet" media="all" href="bootstrap.css">
+    <link type="text/css" rel="stylesheet" media="all" href="codemirror.css">
+    <style>
+        .cm-s-default {
+            background-color:transparent;
+            border: none;
+            line-height: 1.5em;
+            font-family: monospace;
+        }
+        .cm-s-default * {
+            background-color:transparent;
+        }
+    </style>
+</head>
+<body>
+    <pre id="output" class="cm-s-default">
+$$TEXT$$
+    </pre>
+
+    <script src="jquery-2.1.1.min.js"></script>
+    <script src="codemirror.js"></script>
+    <script src="codemirror-pipes.js"></script>
+    <script src="codemirror-esper.js"></script>
+    <script src="codemirror-span.js"></script>
+    <script src="codemirror-clike.js"></script>
+    <script src="underscore-min.js"></script>
+
+    <script>
+    CodeMirror.runMode($('#output').text(), '$$MODE$$', $('#output')[0]);
+    </script>
+</body>
+
+</html>
