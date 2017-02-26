@@ -38,7 +38,7 @@ generate 'default_pipe_example_1' 'pipes-expr' "avg(value#), count() over last m
 generate 'default_pipe_example_2' 'pipes2' "<aggregations> over <window> every <output>"
 
 generate 'by_example_1' 'pipes' "StockTick => avg(price#) by symbol every minute"
-generate 'by_example_2' 'pipes' "StockTick => @onchange value# by symbol"
+generate 'by_example_2' 'pipes' "StockTick => @onchange price# by symbol"
 
 generate 'union_example' 'pipes' "StockTick symbol:GOOG\n=> [\n    avg(price#) over last day every minute\n    union\n    avg(price#) over last hour every minute\n]"
 
