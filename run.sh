@@ -36,5 +36,9 @@ generate 'row_literal_3' 'pipes-expr' "(42 as answer,)"
 
 generate 'default_pipe_example_1' 'pipes-expr' "avg(value#), count() over last minute every 10 seconds"
 generate 'default_pipe_example_2' 'pipes2' "<aggregations> over <window> every <output>"
+
+generate 'by_example_1' 'pipes' "StockTick => avg(price#) by symbol every minute"
+generate 'by_example_2' 'pipes' "StockTick => @onchange value# by symbol"
+
 generate 'union_example' 'pipes' "StockTick symbol:GOOG\n=> [\n    avg(price#) over last day every minute\n    union\n    avg(price#) over last hour every minute\n]"
 
