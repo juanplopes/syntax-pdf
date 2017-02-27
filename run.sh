@@ -5,6 +5,7 @@ tmpfile=$(mktemp /tmp/syntax-pdf.XXXXXX).pdf
 generate() {
     DATA=`echo "$3" | tr '\n' "\\n"` 
     DATA=${DATA///\//\\/}
+    DATA=${DATA//\&/\\\&}
     DATA=${DATA//\</\\\&lt\;}
     DATA=${DATA//\>/\\\&gt\;}
     echo $DATA
@@ -39,6 +40,15 @@ generate 'default_pipe_example_2' 'pipes2' "<aggregations> over <window> every <
 
 generate 'by_example_1' 'pipes' "StockTick => avg(price#) by symbol every minute"
 generate 'by_example_2' 'pipes' "StockTick => @onchange price# by symbol"
+generate 'by_example_3' 'pipes' "StockTick => @onchange price# by symbol expiry 1 hour"
 
-generate 'union_example' 'pipes' "StockTick symbol:GOOG\n=> [\n    avg(price#) over last day every minute\n    union\n    avg(price#) over last hour every minute\n]"
+generate 'union_example' 'pipes' "StockTick symbol:GOOG\n=> [\n    avg(price#) over last day every minute\n    union\n    stdev(price#) over last hour every minute\n]"
+generate 'join_example_1' 'pipes' "StockTick symbol:GOOG\n=> [\n    avg(price#) over last day every minute\n    join\n    stdev(price#) over last hour every minute\n]"
+generate 'join_example_2' 'pipes' "StockTick\n=> [\n    avg(price#) by symbol over last day every minute\n    join on symbol\n    stdev(price#) by symbol over last hour every minute\n]"
+
+generate 'macro_example_1' 'pipes' "def hello(name):\n    \"Hello \${name}!\"\;\nLoginSucessful => hello(displayName) as text"
+generate 'macro_example_2' 'pipes' "def total(list, &prop1, &prop2):\n    list:seq |> sum(prop1#*prop2#);\nOrder => products:total(price, quantity)"
+generate 'macro_example_3' 'pipes' "def @totalpipe(list, &prop1, &prop2):\n    @filter list != null => list:seq |> sum(prop1*prop2);\nOrder => @totalpipe products, price#, quantity#"
+
+
 
