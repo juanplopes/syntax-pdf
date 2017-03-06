@@ -3,17 +3,23 @@
 tmpfile=$(mktemp /tmp/syntax-pdf.XXXXXX).pdf
 
 generate() {
-    DATA=`echo "$3" | tr '\n' "\\n"` 
+    DATA=`echo "$3" | tr '\n' "\\n"`
     DATA=${DATA///\//\\/}
     DATA=${DATA//\</\\\&lt\;}
     DATA=${DATA//\>/\\\&gt\;}
-    echo $DATA
-    sed "s/\\\$\\\$TEXT\\\$\\\$/${DATA}/" html/index.html | sed "s/\\\$\\\$MODE\\\$\\\$/$2/" > html/temp.html
+    DATA=${DATA//\{/\\\{}
+    DATA=${DATA//\}/\\\}}
+    DATA=${DATA//$'\n'/\\n} 
+    echo "$DATA"
+    echo 'sed "s/\\\$\\\$TEXT\\\$\\\$/${DATA}/" html/index.html \| sed "s/\\\$\\\$MODE\\\$\\\$/$2/" \> html/temp.html'
+
+    sed "s/\\\$\\\$TEXT\\\$\\\$/$DATA/" html/index.html | sed "s/\\\$\\\$MODE\\\$\\\$/$2/" > html/temp.html
+    
 
     html-pdf html/temp.html $tmpfile
     mkdir -p output
     pdfcrop $tmpfile output/$1.pdf
-#    rm html/temp.html
+    rm html/temp.html
 }
 
 cd "$(dirname "$0")"
@@ -38,3 +44,4 @@ generate 'default_pipe_example_1' 'pipes-expr' "avg(value#), count() over last m
 generate 'default_pipe_example_2' 'pipes2' "<aggregations> over <window> every <output>"
 generate 'union_example' 'pipes' "StockTick symbol:GOOG\n=> [\n    avg(price#) over last day every minute\n    union\n    avg(price#) over last hour every minute\n]"
 
+generate 'java_function' 'text\/x-java' "$(< Function.java)"
